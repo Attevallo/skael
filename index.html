@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1E1A24">
+<title>SKÅEL</title>
+<style>
+html, body { background: #1E1A24; margin: 0; }
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+
+.sk * { box-sizing: border-box; margin: 0; padding: 0; }
+.sk {
+  --bg: #1E1A24;
+  --panel: #2A2531;
+  --panel2: #322C3B;
+  --line: #403950;
+  --orange: #F0932B;
+  --red: #E0473D;
+  --cream: #F6EFE6;
+  --dim: rgba(246,239,230,.55);
+  font-family: 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
+  color: var(--cream);
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 8% 4%, rgba(240,147,43,.20), transparent 40%),
+    radial-gradient(circle at 96% 12%, rgba(166,107,224,.20), transparent 42%),
+    radial-gradient(circle at 50% 100%, rgba(224,71,61,.16), transparent 46%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding: 20px 16px 70px;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.sk .sheet { max-width: 440px; margin: 0 auto; position: relative; z-index: 1; }
+.sk h2, .sk h3, .sk .btn, .sk .bigname, .sk .counter, .sk .word, .sk .add, .sk .step, .sk .num {
+  font-family: 'Baloo 2', 'Trebuchet MS', system-ui, sans-serif;
+}
+
+/* --- confetti --- */
+.sk .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.sk .confetti i {
+  position: absolute; width: 7px; height: 11px; border-radius: 2px; opacity: .5;
+  animation: drift 7s ease-in-out infinite;
+}
+@keyframes drift { 0%,100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(9px) rotate(calc(var(--r) + 18deg)); } }
+
+/* --- wordmark --- */
+.sk .mark { position: relative; padding-top: 56px; display: flex; justify-content: center; }
+.sk .word {
+  display: flex; align-items: flex-end; justify-content: center; font-weight: 800;
+  font-size: clamp(46px, 16vw, 74px); line-height: .82; color: var(--orange);
+  letter-spacing: -.02em; filter: drop-shadow(0 6px 0 rgba(0,0,0,.35));
+}
+.sk .word span { display: inline-block; }
+.sk .l0 { transform: rotate(-7deg) translateY(3px); }
+.sk .l1 { transform: rotate(4deg) translateY(-3px); }
+.sk .l2 { transform: rotate(-3deg) translateY(2px); color: #F6A94A; }
+.sk .l3 { transform: rotate(8deg) translateY(-2px); }
+.sk .cup { width: .72em; height: 1.12em; display: block; margin: 0 -.02em -.06em; transform: rotate(-9deg); }
+.sk .cup-lg { width: 66px; height: 100px; display: block; margin: 0 auto; }
+.sk .toss {
+  position: absolute; top: -4px; left: 50%; width: 170px; height: 86px;
+  transform: translateX(-22%); pointer-events: none;
+}
+.sk .tagline { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; margin-top: 22px; }
+.sk .tagline b {
+  font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .04em;
+  text-transform: uppercase; padding: 8px 15px; border-radius: 999px;
+}
+.sk .tagline b:nth-child(1) { color: #2A1B06; background: var(--orange); transform: rotate(-2deg); }
+.sk .tagline b:nth-child(2) { color: var(--cream); background: var(--red); transform: rotate(2.5deg); }
+
+/* --- panels --- */
+.sk .card {
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
+  border: 1.5px solid var(--line); border-radius: 22px; padding: 20px 18px; margin-top: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.32);
+}
+.sk h2 { font-size: 25px; font-weight: 700; line-height: 1.1; }
+.sk h3 { font-size: 15px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--orange); }
+.sk p { font-size: 14.5px; line-height: 1.5; }
+.sk .muted { color: var(--dim); font-size: 13.5px; }
+.sk .eyebrow { font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 800; }
+.sk .center { text-align: center; }
+
+/* --- buttons --- */
+.sk button { font-family: inherit; cursor: pointer; border: none; color: inherit; }
+.sk .btn {
+  width: 100%; background: linear-gradient(180deg, #F7A63F, var(--orange)); color: #2A1B06;
+  font-weight: 700; font-size: 18px; padding: 15px 12px; border-radius: 16px; margin-top: 14px;
+  box-shadow: 0 5px 0 #B96A17; transition: transform .07s ease, box-shadow .07s ease;
+}
+.sk .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #B96A17; }
+.sk .btn.red { background: linear-gradient(180deg, #EC5B50, var(--red)); color: #fff; box-shadow: 0 5px 0 #8F241D; }
+.sk .btn.red:active { box-shadow: 0 1px 0 #8F241D; }
+.sk .btn.ghost { background: transparent; border: 1.5px solid var(--line); color: var(--cream); box-shadow: none; }
+.sk .btn.ghost:active { transform: translateY(2px); }
+.sk .btn.small { font-size: 15px; padding: 11px; margin-top: 10px; }
+.sk .btn:disabled { background: #37313F; color: rgba(246,239,230,.3); box-shadow: none; cursor: not-allowed; transform: none; }
+.sk .btn-ghost {
+  background: transparent; border: 1.5px solid var(--line); color: var(--dim); border-radius: 999px;
+  padding: 8px 14px; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+}
+
+/* --- chips --- */
+.sk .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.sk .chip {
+  display: inline-flex; align-items: center; gap: 7px; background: transparent;
+  border: 1.5px solid var(--line); color: var(--cream); border-radius: 999px;
+  padding: 8px 14px 8px 8px; font-weight: 800; font-size: 15px;
+}
+.sk .chip.on { color: #1E1608; border-color: transparent; }
+.sk .chip.small { font-size: 12.5px; padding: 4px 11px 4px 4px; }
+.sk .chip.plain { padding: 10px 16px; }
+
+/* --- rows --- */
+.sk .row { display: flex; align-items: center; gap: 10px; }
+.sk .between { justify-content: space-between; }
+.sk .plist { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.sk .pitem {
+  display: flex; align-items: center; gap: 11px; border: 1.5px solid var(--line);
+  border-radius: 16px; padding: 9px 12px; background: rgba(0,0,0,.14);
+}
+.sk .x { margin-left: auto; background: transparent; font-size: 20px; color: var(--dim); padding: 0 4px; }
+.sk input[type=text], .sk input[type=number] {
+  font-family: 'Nunito', sans-serif; font-size: 16px; padding: 13px 14px; width: 100%;
+  border: 1.5px solid var(--line); border-radius: 14px; background: rgba(0,0,0,.25);
+  color: var(--cream); font-weight: 700;
+}
+.sk input::placeholder { color: rgba(246,239,230,.35); }
+.sk input:focus-visible, .sk button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.sk .add {
+  flex: none; width: 54px; height: 50px; background: var(--orange); color: #2A1B06;
+  border-radius: 14px; font-size: 28px; font-weight: 700; box-shadow: 0 4px 0 #B96A17;
+}
+.sk .toggle {
+  border-radius: 999px; padding: 8px 16px; font-weight: 800; font-size: 13px; letter-spacing: .06em;
+  border: 1.5px solid var(--line); background: transparent; color: var(--dim); min-width: 62px;
+}
+.sk .toggle.on { background: var(--orange); color: #2A1B06; border-color: transparent; }
+
+/* --- blobs --- */
+.sk .blob { display: block; flex: none; }
+.sk .blob.wob { animation: wob 3.4s ease-in-out infinite; transform-origin: 50% 90%; }
+@keyframes wob { 0%,100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+
+/* --- handoff --- */
+.sk .bigname { font-size: clamp(38px, 12vw, 54px); font-weight: 800; line-height: 1.05; margin: 6px 0 4px; word-break: break-word; }
+
+/* --- verdict --- */
+.sk .stamp { font-family: 'Baloo 2', sans-serif; font-size: 12.5px; font-weight: 700; letter-spacing: .08em; border-radius: 999px; padding: 4px 12px; text-transform: uppercase; }
+.sk .stamp.ok { background: rgba(140,198,79,.18); color: #A6D96B; }
+.sk .stamp.no { background: rgba(224,71,61,.18); color: #F0837A; }
+.sk .reveal-row { border-top: 1.5px solid var(--line); padding: 14px 0; }
+.sk .reveal-row:first-child { border-top: none; padding-top: 2px; }
+
+/* --- distribution --- */
+.sk .counter { font-size: 66px; font-weight: 800; text-align: center; line-height: 1; color: var(--orange); }
+.sk .target { border: 1.5px solid var(--line); border-radius: 16px; padding: 10px 14px 4px; margin-top: 10px; background: rgba(0,0,0,.14); }
+.sk .target .num { font-size: 22px; font-weight: 800; margin-left: auto; color: var(--orange); }
+.sk input[type=range] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 34px;
+  background: transparent; margin: 2px 0 0; padding: 0;
+}
+.sk input[type=range]::-webkit-slider-runnable-track {
+  height: 12px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--c) 0 var(--p), #3B3446 var(--p) 100%);
+}
+.sk input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--c); border: 3.5px solid #17121C; margin-top: -9px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.45);
+}
+.sk input[type=range]::-moz-range-track { height: 12px; border-radius: 999px; background: #3B3446; }
+.sk input[type=range]::-moz-range-progress { height: 12px; border-radius: 999px; background: var(--c); }
+.sk input[type=range]::-moz-range-thumb {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--c); border: 3.5px solid #17121C;
+}
+
+/* --- party layer --- */
+.sk .wheelcard { position: relative; overflow: hidden; }
+.sk .wheelcard > *:not(.party) { position: relative; z-index: 1; }
+.sk .party { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.sk .party .who { position: absolute; opacity: .92; }
+.sk .hop0 { animation: hopA 1.5s ease-in-out infinite; }
+.sk .hop1 { animation: hopB 1.9s ease-in-out infinite; }
+.sk .hop2 { animation: hopA 1.7s ease-in-out infinite reverse; }
+.sk .sway0 { animation: swayA 2.6s ease-in-out infinite; }
+.sk .sway1 { animation: swayB 3.1s ease-in-out infinite; }
+.sk .sway2 { animation: swayC 3.6s ease-in-out infinite; }
+@keyframes hopA {
+  0%,100% { transform: translateY(0) rotate(-6deg); }
+  30% { transform: translateY(-14px) rotate(5deg); }
+  60% { transform: translateY(0) rotate(6deg); }
+  80% { transform: translateY(-6px) rotate(-4deg); }
+}
+@keyframes hopB {
+  0%,100% { transform: translateY(0) rotate(7deg) scale(1); }
+  40% { transform: translateY(-17px) rotate(-8deg) scale(1.05); }
+  70% { transform: translateY(-3px) rotate(4deg) scale(.98); }
+}
+@keyframes swayA {
+  0%,100% { transform: rotate(-20deg) translate(0,4px); }
+  35% { transform: rotate(16deg) translate(9px,0); }
+  70% { transform: rotate(-26deg) translate(-7px,6px); }
+}
+@keyframes swayB {
+  0%,100% { transform: rotate(14deg) translate(3px,0) skewX(-4deg); }
+  50% { transform: rotate(-18deg) translate(-8px,7px) skewX(5deg); }
+}
+@keyframes swayC {
+  0% { transform: rotate(-8deg); }
+  25% { transform: rotate(64deg) translateY(12px); }
+  50% { transform: rotate(-12deg); }
+  75% { transform: rotate(-70deg) translateY(14px); }
+  100% { transform: rotate(-8deg); }
+}
+
+/* --- wheel dressing --- */
+.sk .rays {
+  position: absolute; inset: -26px; border-radius: 50%; z-index: 0;
+  background: repeating-conic-gradient(rgba(255,255,255,.07) 0 7deg, transparent 7deg 14deg);
+  animation: slowspin 22s linear infinite; mask: radial-gradient(circle, #000 62%, transparent 72%);
+  -webkit-mask: radial-gradient(circle, #000 62%, transparent 72%);
+}
+.sk .rays.devil { background: repeating-conic-gradient(rgba(224,71,61,.16) 0 7deg, transparent 7deg 14deg); animation-duration: 9s; }
+@keyframes slowspin { to { transform: rotate(360deg); } }
+.sk .gloss {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none; z-index: 3;
+  background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.22), transparent 45%);
+}
+.sk .wheel.spinning { box-shadow: 0 0 0 4px var(--orange), 0 0 44px rgba(240,147,43,.6), 0 14px 30px rgba(0,0,0,.45); }
+.sk .wheel.devil.spinning { box-shadow: 0 0 0 4px #E0473D, 0 0 54px rgba(224,71,61,.85), 0 14px 30px rgba(0,0,0,.5); }
+.sk .pointer.bump { animation: bump .13s linear infinite; }
+@keyframes bump {
+  0%,100% { transform: translateX(-50%) rotate(0); }
+  50% { transform: translateX(-50%) rotate(-11deg); }
+}
+.sk .hub .cupmini { width: 26px; height: 34px; display: block; margin: 0 auto 2px; }
+.sk .burst { position: absolute; inset: 50% auto auto 50%; z-index: 4; }
+.sk .burst i {
+  position: absolute; width: 9px; height: 14px; border-radius: 2px;
+  animation: burst .9s ease-out forwards;
+}
+@keyframes burst {
+  from { transform: translate(0,0) scale(.4) rotate(0); opacity: 1; }
+  to { transform: translate(var(--x), var(--y)) scale(1.15) rotate(260deg); opacity: 0; }
+}
+.sk .devilcard {
+  background: linear-gradient(180deg, #2C0F14, #120709); border-color: #7A1D18;
+  animation: hell 2.6s ease-in-out infinite;
+}
+@keyframes hell {
+  0%,100% { box-shadow: inset 0 0 34px rgba(179,40,32,.28), 0 12px 30px rgba(0,0,0,.45); }
+  50% { box-shadow: inset 0 0 66px rgba(224,71,61,.5), 0 12px 30px rgba(0,0,0,.45); }
+}
+.sk .devilcard h2 { color: #F0837A; }
+/* --- racet --- */
+.sk .racecard { position: relative; overflow: hidden; }
+.sk .track {
+  display: flex; flex-wrap: wrap; gap: 16px 18px; justify-content: center; align-items: flex-end;
+  min-height: 132px; margin-top: 20px; padding-bottom: 16px;
+  border-bottom: 4px dashed rgba(246,239,230,.22);
+}
+.sk .runner { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.sk .runner.r0 { animation: runA 0.62s ease-in-out infinite; }
+.sk .runner.r1 { animation: runB 0.74s ease-in-out infinite; }
+.sk .runner.r2 { animation: runA 0.55s ease-in-out infinite reverse; }
+.sk .runner.out { animation: wipeout 1.9s cubic-bezier(.3,.8,.4,1) forwards; }
+.sk .rname { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; white-space: nowrap; }
+.sk .fx { position: absolute; top: 6px; right: -16px; font-size: 30px; animation: fxpop 1.9s ease-out forwards; }
+@keyframes runA {
+  0%,100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-11px) rotate(5deg); }
+}
+@keyframes runB {
+  0%,100% { transform: translateY(-2px) rotate(6deg); }
+  50% { transform: translateY(-15px) rotate(-6deg); }
+}
+@keyframes wipeout {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  22% { transform: translateY(-16px) rotate(-14deg) scale(1.12); }
+  55% { transform: translateY(16px) rotate(74deg) scale(.96); opacity: 1; }
+  100% { transform: translateY(58px) rotate(128deg) scale(.6); opacity: 0; }
+}
+@keyframes fxpop {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  25% { transform: scale(1.45) rotate(12deg); opacity: 1; }
+  70% { transform: scale(1) rotate(0); opacity: 1; }
+  100% { transform: scale(.9) translateY(14px); opacity: 0; }
+}
+.sk .champ {
+  display: flex; align-items: flex-end; justify-content: center; gap: 6px;
+  margin-top: 22px; animation: arrive .7s ease-out;
+}
+.sk .champblob { animation: cheer 1.1s ease-in-out infinite; }
+.sk .beer { width: 82px; height: 100px; display: block; animation: tilt 1.6s ease-in-out infinite; transform-origin: 20% 90%; }
+@keyframes cheer {
+  0%,100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-14px) rotate(5deg); }
+}
+@keyframes tilt {
+  0%,60%,100% { transform: rotate(0); }
+  30% { transform: rotate(-26deg); }
+}
+@keyframes arrive {
+  from { transform: translateX(-60px) scale(.8); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.sk .flames { display: flex; justify-content: center; gap: 6px; font-size: 20px; margin-top: 2px; }
+
+/* --- wheel --- */
+.sk .wheelwrap { position: relative; width: 268px; height: 268px; margin: 22px auto 0; }
+.sk .wheel {
+  width: 100%; height: 100%; border-radius: 50%; position: relative; z-index: 1;
+  border: 6px solid #17121C; box-shadow: 0 0 0 4px var(--orange), 0 14px 30px rgba(0,0,0,.45);
+  transition: transform 4.4s cubic-bezier(.15,.85,.25,1);
+}
+.sk .wheel.devil { box-shadow: 0 0 0 4px #B32820, 0 0 34px rgba(179,40,32,.7), 0 14px 30px rgba(0,0,0,.5); }
+.sk .hub {
+  position: absolute; inset: 50% auto auto 50%; transform: translate(-50%,-50%); z-index: 2;
+  width: 78px; height: 78px; border-radius: 50%; background: #17121C; border: 4px solid var(--orange);
+  display: flex; align-items: center; justify-content: center; font-family: 'Baloo 2', sans-serif;
+  font-weight: 800; font-size: 14px; color: var(--orange); text-align: center; line-height: 1;
+}
+.sk .hub.devil { border-color: #E0473D; color: #E0473D; }
+.sk .pointer {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0;
+  border-left: 14px solid transparent; border-right: 14px solid transparent;
+  border-top: 26px solid var(--orange); z-index: 2; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5));
+}
+.sk .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 20px; justify-content: center; }
+.sk .legend span { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--dim); font-weight: 700; }
+.sk .legend i { width: 11px; height: 11px; border-radius: 3px; }
+.sk .devilcard { background: linear-gradient(180deg, #2A0F14, #16090D); border-color: #7A1D18; }
+.sk .devilcard h2, .sk .devilcard h3 { color: #F0837A; }
+
+/* --- outcome --- */
+.sk .outrow { display: flex; align-items: center; gap: 11px; padding: 13px 0; border-top: 1.5px solid var(--line); }
+.sk .outrow:first-child { border-top: none; }
+.sk .amount { margin-left: auto; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; color: var(--orange); white-space: nowrap; }
+.sk .amount.gone { color: #6FBF8A; text-decoration: line-through; opacity: .75; }
+.sk .rulebar {
+  display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px;
+}
+.sk .rulebar b {
+  font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px;
+  background: rgba(224,71,61,.16); color: #F0837A;
+}
+
+/* --- scoreboard --- */
+.sk table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
+.sk th { font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); text-align: right; padding: 0 4px 10px; font-weight: 800; }
+.sk th:first-child, .sk td:first-child { text-align: left; }
+.sk td { padding: 9px 4px; text-align: right; border-top: 1.5px solid var(--line); font-weight: 800; }
+.sk .banner { border-radius: 16px; padding: 14px; margin-top: 16px; font-weight: 800; text-align: center; font-size: 14.5px; }
+.sk .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .sk * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="sk"><div class="confetti" id="conf" aria-hidden="true"></div><div class="sheet" id="app"></div></div>
+<script>
+/* =====================================================================
+   SKÅEL – drickleken till Spotify Blend
+   ===================================================================== */
+var INK = "#1B1620";
+var PALETTE = ["#F0932B","#E4514A","#4FC3B0","#F2C94C","#A66BE0",
+               "#5B9BF0","#F06BA8","#8CC64F","#F07E3C","#7FD3E8"];
+
+var CATS = {
+  other:  { color: "#A66BE0", label: "RACE" },
+  safe:   { color: "#3F9A63", label: "Du klarar dig" },
+  double: { color: "#F0932B", label: "Dubbla klunkar" },
+  shot:   { color: "#D93B33", label: "2 cl shot istället" },
+  drunk:  { color: "#140C12", label: "DRUNK MODE" }
+};
+var DRUNK = [
+  { id: "d-double", color: "#F2560A", label: "Dubbla klunkarna" },
+  { id: "d-shot",   color: "#8C0B2A", label: "4 cl shot" },
+  { id: "d-hand",   color: "#3A0B4D", label: "Du dricker med fel hand" },
+  { id: "d-names",  color: "#D9A404", label: "Du får inte säga namn" }
+];
+var ODDS = { safe: 20, double: 20, other: 15, shot: 15, drunk: 30 };
+var ODDS100 = [];
+Object.keys(ODDS).forEach(function (k) { for (var i = 0; i < ODDS[k]; i++) ODDS100.push(k); });
+
+var RACE_OUTS = [
+  { fx: "🌲", text: "sprang rakt in i ett träd" },
+  { fx: "🤮", text: "spydde och halkade i sin egen spya" },
+  { fx: "🍾", text: "fick en flaska i skallen" },
+  { fx: "👊", text: "slog ner en annan blobb och blev utslängd" },
+  { fx: "🕴️", text: "stoppades av vakten och fick gå hem" },
+  { fx: "😴", text: "somnade" },
+  { fx: "🚓", text: "blev tagen av polisen" },
+  { fx: "🥃", text: "tog för många shots" },
+  { fx: "💃", text: "följde med ett tjejgäng" },
+  { fx: "💒", text: "gifte sig" }
+];
+
+var BODIES = [
+  "M50 7c25 0 43 18 43 41s-18 45-43 45S7 71 7 48 25 7 50 7z",
+  "M50 8c27 0 41 21 41 41 0 25-16 44-42 44S8 73 9 49 23 8 50 8z",
+  "M50 6c23 0 45 16 44 42 0 27-18 45-45 45S6 73 6 47 27 6 50 6z"
+];
+
+function shuffle(a) {
+  var arr = a.slice(), i, j, t;
+  for (i = arr.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1)); t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+function buildWheel() {
+  var counts = { safe: 10, double: 10, other: 8, shot: 7, drunk: 15 }, out = [];
+  Object.keys(counts).forEach(function (k) { for (var i = 0; i < counts[k]; i++) out.push(k); });
+  return shuffle(out);
+}
+function randomSplit(total, n) {
+  if (n <= 1) return [total];
+  var pool = [], i;
+  for (i = 0; i < total + n - 1; i++) pool.push(i);
+  var cuts = [];
+  for (i = 0; i < n - 1; i++) cuts.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+  cuts.sort(function (a, b) { return a - b; });
+  var res = [], prev = -1;
+  for (i = 0; i < n - 1; i++) { res.push(cuts[i] - prev - 1); prev = cuts[i]; }
+  res.push(total + n - 2 - prev);
+  return res;
+}
+
+/* ---------- blob-delar ---------- */
+function EYES(v) {
+  var w = "#F8F4EE";
+  switch (v % 10) {
+    case 0: return '<ellipse cx="37" cy="47" rx="9" ry="8" fill="'+w+'"/><ellipse cx="63" cy="47" rx="9" ry="8" fill="'+w+'"/>'
+      + '<circle cx="37" cy="49" r="3.6" fill="'+INK+'"/><circle cx="63" cy="49" r="3.6" fill="'+INK+'"/>'
+      + '<path d="M28 44c5-4 13-4 18 0M54 44c5-4 13-4 18 0" stroke="'+INK+'" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+    case 1: return '<g stroke="'+INK+'" stroke-width="3.6" stroke-linecap="round"><path d="M31 42l11 11M42 42L31 53M58 42l11 11M69 42L58 53"/></g>';
+    case 2: return '<ellipse cx="37" cy="47" rx="9.5" ry="9" fill="'+w+'"/><ellipse cx="63" cy="47" rx="9.5" ry="9" fill="'+w+'"/>'
+      + '<path d="M37 47a4 4 0 1 1-3-4" stroke="'+INK+'" stroke-width="2.8" fill="none"/>'
+      + '<path d="M63 47a4 4 0 1 0 3-4" stroke="'+INK+'" stroke-width="2.8" fill="none"/>';
+    case 3: return '<ellipse cx="36" cy="46" rx="11" ry="10.5" fill="'+w+'"/><circle cx="36" cy="48" r="4.2" fill="'+INK+'"/>'
+      + '<ellipse cx="64" cy="48" rx="6" ry="5.5" fill="'+w+'"/><circle cx="64" cy="49" r="2.6" fill="'+INK+'"/>';
+    case 4: return '<ellipse cx="37" cy="47" rx="9" ry="8.5" fill="'+w+'"/><ellipse cx="63" cy="47" rx="9" ry="8.5" fill="'+w+'"/>'
+      + '<circle cx="32" cy="48" r="3.4" fill="'+INK+'"/><circle cx="68" cy="48" r="3.4" fill="'+INK+'"/>';
+    case 5: return '<path d="M28 47a9 9 0 0 1 18 0zM54 47a9 9 0 0 1 18 0z" fill="'+w+'"/>'
+      + '<circle cx="37" cy="45" r="3.2" fill="'+INK+'"/><circle cx="63" cy="45" r="3.2" fill="'+INK+'"/>'
+      + '<path d="M28 47h18M54 47h18" stroke="'+INK+'" stroke-width="3.2" stroke-linecap="round"/>';
+    case 6: return '<ellipse cx="37" cy="46" rx="10.5" ry="10" fill="'+w+'"/><ellipse cx="63" cy="46" rx="10.5" ry="10" fill="'+w+'"/>'
+      + '<circle cx="38" cy="47" r="2.4" fill="'+INK+'"/><circle cx="62" cy="47" r="2.4" fill="'+INK+'"/>';
+    case 7: return '<g stroke="'+INK+'" stroke-width="3.6" fill="none" stroke-linecap="round"><path d="M29 50c4-6 12-6 16 0M55 50c4-6 12-6 16 0"/></g>';
+    case 8: return '<ellipse cx="37" cy="47" rx="9.5" ry="9" fill="'+w+'"/><circle cx="37" cy="48" r="3.8" fill="'+INK+'"/>'
+      + '<path d="M54 49c4-5 12-5 16 0" stroke="'+INK+'" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+    default: return '<ellipse cx="37" cy="47" rx="8" ry="7.5" fill="'+w+'"/><ellipse cx="63" cy="47" rx="8" ry="7.5" fill="'+w+'"/>'
+      + '<circle cx="39" cy="48" r="3" fill="'+INK+'"/><circle cx="61" cy="48" r="3" fill="'+INK+'"/>'
+      + '<path d="M28 36c5-3 12-3 16 1M56 37c4-4 11-4 16-1" stroke="'+INK+'" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  }
+}
+function MOUTH(v) {
+  switch (v % 4) {
+    case 0: return '<path d="M40 68c4 5 16 5 20 0" stroke="'+INK+'" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+    case 1: return '<ellipse cx="50" cy="70" rx="9" ry="7.5" fill="'+INK+'"/><path d="M44 72c4 5 8 5 12 0" fill="#E4514A"/>';
+    case 2: return '<path d="M40 67c3 4 7 4 10 0s7-4 10 0" stroke="'+INK+'" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+    default: return '<path d="M40 66c4 6 16 6 20 0" stroke="'+INK+'" stroke-width="3.4" fill="none" stroke-linecap="round"/>'
+      + '<path d="M46 72c0 5 8 5 8 0z" fill="#E4514A" stroke="'+INK+'" stroke-width="2.4"/>';
+  }
+}
+function EXTRA(v, color) {
+  switch (v % 10) {
+    case 0: return '<path d="M50 2 62 22H38z" fill="#F2C94C" stroke="'+INK+'" stroke-width="3" stroke-linejoin="round"/>'
+      + '<circle cx="50" cy="2" r="4" fill="#E4514A" stroke="'+INK+'" stroke-width="2.4"/>';
+    case 1: return '<g stroke="'+INK+'" stroke-width="3.4" fill="none" stroke-linecap="round"><path d="M38 12c2-8 8-10 10-4M50 8c1-9 8-10 11-3M62 14c3-7 9-6 10 0"/></g>';
+    case 2: return '<circle cx="78" cy="16" r="7" fill="rgba(246,239,230,.35)" stroke="'+INK+'" stroke-width="2.2"/>'
+      + '<circle cx="88" cy="6" r="4" fill="rgba(246,239,230,.3)" stroke="'+INK+'" stroke-width="2"/>';
+    case 3: return '<path d="M38 4h24l-4 18H42z" fill="#E4514A" stroke="'+INK+'" stroke-width="3" stroke-linejoin="round"/>'
+      + '<ellipse cx="50" cy="4" rx="12" ry="3.4" fill="#F8F4EE" stroke="'+INK+'" stroke-width="2.6"/>';
+    case 4: return '<path d="M32 16l6-12 6 9 6-12 6 12 6-9 6 12z" fill="#F2C94C" stroke="'+INK+'" stroke-width="3" stroke-linejoin="round"/>';
+    case 5: return '<path d="M84 30c4 7 6 10 6 13a6 6 0 0 1-12 0c0-3 2-6 6-13z" fill="#7FD3E8" stroke="'+INK+'" stroke-width="2.6"/>';
+    case 6: return '<path d="M50 10V0" stroke="'+INK+'" stroke-width="3.4" stroke-linecap="round"/>'
+      + '<circle cx="50" cy="-2" r="6" fill="'+color+'" stroke="'+INK+'" stroke-width="3"/>';
+    case 7: return '<path d="M14 34c14-9 58-9 72 0l-2 9c-16-8-52-8-68 0z" fill="#A66BE0" stroke="'+INK+'" stroke-width="3" stroke-linejoin="round"/>';
+    case 8: return '<path d="M52 8c10-6 16 2 10 8-5 5-14 2-12-6" fill="none" stroke="'+INK+'" stroke-width="3.6" stroke-linecap="round"/>';
+    default: return '<g stroke="'+INK+'" stroke-width="3.4" fill="none" stroke-linecap="round"><path d="M18 34c-6-6-4-14 3-14M82 34c6-6 4-14-3-14"/></g>';
+  }
+}
+function PROP(kind) {
+  switch (kind) {
+    case "cup": return '<g transform="translate(72 50) rotate(16)">'
+      + '<path d="M0 0h24l-4 30H4z" fill="#D93B33" stroke="'+INK+'" stroke-width="3.4" stroke-linejoin="round"/>'
+      + '<ellipse cx="12" cy="0" rx="12" ry="4" fill="#F8F4EE" stroke="'+INK+'" stroke-width="3"/></g>';
+    case "puke": return '<ellipse cx="50" cy="70" rx="11" ry="9" fill="'+INK+'"/>'
+      + '<path d="M50 76c1 12-8 16-12 28" stroke="#8CC64F" stroke-width="11" fill="none" stroke-linecap="round"/>'
+      + '<ellipse cx="36" cy="108" rx="19" ry="6" fill="#8CC64F"/><circle cx="56" cy="92" r="4" fill="#8CC64F"/>';
+    case "phone": return '<rect x="70" y="60" width="24" height="38" rx="6" fill="#241C2C" stroke="'+INK+'" stroke-width="3.4" transform="rotate(14 82 79)"/>'
+      + '<rect x="74" y="65" width="16" height="26" rx="3" fill="#7FD3E8" transform="rotate(14 82 79)"/>'
+      + '<path d="M92 48c3-6 11-3 8 3-2 4-8 6-11 8-1-4-1-8 3-11z" fill="#E4514A" stroke="'+INK+'" stroke-width="2.6"/>';
+    case "slur": return '<g stroke="'+INK+'" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8">'
+      + '<path d="M92 34c5 3 5 8 0 11s-5 8 0 11"/><path d="M8 30c-5 3-5 8 0 11s5 8 0 11"/></g>';
+    case "fall": return '<g fill="#F2C94C" stroke="'+INK+'" stroke-width="2">'
+      + '<path d="M22 6l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path d="M80 2l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z"/></g>';
+    default: return "";
+  }
+}
+function blob(v, color, size, o) {
+  o = o || {};
+  var ev = o.drunk ? (v % 2 ? 2 : 1) : v;
+  return '<svg class="blob' + (o.wobble ? " wob" : "") + '" width="' + size + '" height="' + size
+    + '" viewBox="-14 -16 128 136" aria-hidden="true">'
+    + '<path d="' + BODIES[v % 3] + '" fill="' + color + '" stroke="' + INK + '" stroke-width="4"/>'
+    + (o.drunk
+      ? '<ellipse cx="25" cy="61" rx="10" ry="6.5" fill="rgba(224,71,61,.5)"/><ellipse cx="75" cy="61" rx="10" ry="6.5" fill="rgba(224,71,61,.5)"/>'
+      : '<ellipse cx="26" cy="62" rx="7" ry="4.5" fill="rgba(0,0,0,.16)"/><ellipse cx="74" cy="62" rx="7" ry="4.5" fill="rgba(0,0,0,.16)"/>')
+    + EXTRA(v, color) + EYES(ev)
+    + (o.hold === "puke" ? "" : MOUTH(o.drunk ? 1 : v))
+    + PROP(o.hold) + '</svg>';
+}
+function cupSVG(cls) {
+  return '<svg class="' + cls + '" viewBox="0 0 100 134" aria-hidden="true">'
+    + '<path d="M17 6c22-4 44-4 66 0l12 106c-26 6-64 6-90 0z" fill="#D93B33" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>'
+    + '<path d="M21 46c19-3 39-3 58 0" stroke="' + INK + '" stroke-width="2.8" fill="none" opacity=".8"/>'
+    + '<path d="M24 78c17-3 35-3 52 0" stroke="' + INK + '" stroke-width="2.8" fill="none" opacity=".8"/>'
+    + '<ellipse cx="50" cy="112" rx="45" ry="12" fill="#F8F4EE" stroke="' + INK + '" stroke-width="4"/></svg>';
+}
+function beerSVG() {
+  return '<svg class="beer" viewBox="0 0 92 112" aria-hidden="true">'
+    + '<path d="M64 40h12a11 11 0 0 1 0 32H64z" fill="#E8C77A" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>'
+    + '<path d="M12 34h52v66a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8z" fill="#F2B21C" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>'
+    + '<path d="M24 50v42M36 56v32" stroke="rgba(255,255,255,.45)" stroke-width="5" stroke-linecap="round"/>'
+    + '<path d="M12 34c0-13 52-13 52 0z" fill="#FFF7E6" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>'
+    + '<ellipse cx="24" cy="26" rx="13" ry="11" fill="#FFF7E6" stroke="' + INK + '" stroke-width="4"/>'
+    + '<ellipse cx="52" cy="24" rx="14" ry="12" fill="#FFF7E6" stroke="' + INK + '" stroke-width="4"/></svg>';
+}
+function wordmark() {
+  return '<div class="mark"><svg class="toss" viewBox="0 0 170 86" aria-hidden="true">'
+    + '<path d="M44 44C70-2 112 0 124 74" fill="none" stroke="rgba(246,239,230,.4)" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="7 7"/>'
+    + '<ellipse cx="28" cy="36" rx="15" ry="17" fill="#F6C15A" stroke="' + INK + '" stroke-width="3" transform="rotate(-12 28 36)"/>'
+    + '<ellipse cx="33" cy="28" rx="3.6" ry="2.6" fill="#FDEBC4"/>'
+    + '<path d="M150 12l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" fill="#F2C94C" opacity=".85"/>'
+    + '<circle cx="14" cy="72" r="3.4" fill="#A66BE0" opacity=".8"/>'
+    + '<circle cx="164" cy="52" r="3" fill="#4FC3B0" opacity=".8"/></svg>'
+    + '<div class="word"><span class="l0">S</span><span class="l1">K</span>'
+    + cupSVG("cup") + '<span class="l2">E</span><span class="l3">L</span></div></div>';
+}
+
+/* =====================================================================
+   TILLSTÅND
+   ===================================================================== */
+var S = {
+  screen: "setup", players: [], nameInput: "", seq: 1,
+  sips: 10, immune: true, shotSkipOn: true, bombOn: true, bombSips: 2, luckyOn: true,
+  round: 1, song: "", turn: 0, pick: [], guesses: {}, truth: [],
+  distIdx: 0, pending: {}, roundTaken: {}, roundNote: "", luckyText: {}, spun: {},
+  rules: [], log: [], showScores: false, now: null, spMsg: "",
+  wheelFor: null, segs: [], rot: 0, spinning: false, result: null, devil: false,
+  runners: [], dying: null, champ: null
+};
+
+function save() { try { localStorage.setItem("skael_state", JSON.stringify(S)); } catch (e) {} }
+function load() {
+  try {
+    var raw = localStorage.getItem("skael_state");
+    if (raw) { var o = JSON.parse(raw); for (var k in o) S[k] = o[k]; }
+  } catch (e) {}
+  S.spinning = false; S.dying = null;
+  if (S.screen === "wheel" || S.screen === "race") S.screen = "outcome";
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function eqSet(a, b) {
+  a = a || []; b = b || [];
+  return a.length === b.length && a.slice().sort().join("|") === b.slice().sort().join("|");
+}
+function of(id) { for (var i = 0; i < S.players.length; i++) if (S.players[i].id === id) return S.players[i]; return null; }
+function nameOf(id) { var p = of(id); return p ? p.name : "?"; }
+function winners() {
+  return S.players.filter(function (p) { return eqSet(S.guesses[p.id], S.truth); })
+                  .map(function (p) { return p.id; });
+}
+function allCorrect() { return S.players.length > 0 && winners().length === S.players.length; }
+function targetsFor(giverId) {
+  var w = winners();
+  return S.immune
+    ? S.players.filter(function (p) { return w.indexOf(p.id) === -1; })
+    : S.players.filter(function (p) { return p.id !== giverId; });
+}
+function toggleIn(list, id) {
+  var i = list.indexOf(id);
+  return i === -1 ? list.concat([id]) : list.slice(0, i).concat(list.slice(i + 1));
+}
+
+/* =====================================================================
+   SPOTIFY – Authorization Code med PKCE
+   ===================================================================== */
+var SP = {
+  redirect: location.origin + location.pathname,
+  scope: "user-read-currently-playing",
+  cid: function () { return localStorage.getItem("skael_cid") || ""; },
+  connected: function () { return !!localStorage.getItem("skael_token"); }
+};
+function randStr(n) {
+  var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+  var a = new Uint8Array(n); crypto.getRandomValues(a);
+  var out = "";
+  for (var i = 0; i < n; i++) out += chars[a[i] % chars.length];
+  return out;
+}
+async function pkceChallenge(v) {
+  var d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v));
+  var bytes = new Uint8Array(d), b = "";
+  for (var i = 0; i < bytes.length; i++) b += String.fromCharCode(bytes[i]);
+  return btoa(b).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+async function spLogin() {
+  if (!SP.cid()) { S.spMsg = "Klistra in ditt Client ID först."; return; }
+  var v = randStr(64);
+  localStorage.setItem("skael_verifier", v);
+  save();
+  location.href = "https://accounts.spotify.com/authorize?" + new URLSearchParams({
+    client_id: SP.cid(), response_type: "code", redirect_uri: SP.redirect,
+    scope: SP.scope, code_challenge_method: "S256", code_challenge: await pkceChallenge(v)
+  }).toString();
+}
+async function spExchange(code) {
+  var r = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "authorization_code", code: code, redirect_uri: SP.redirect,
+      client_id: SP.cid(), code_verifier: localStorage.getItem("skael_verifier") || ""
+    })
+  });
+  var d = await r.json();
+  if (d.access_token) {
+    localStorage.setItem("skael_token", d.access_token);
+    if (d.refresh_token) localStorage.setItem("skael_refresh", d.refresh_token);
+    localStorage.setItem("skael_exp", String(Date.now() + (d.expires_in - 60) * 1000));
+    S.spMsg = "Spotify kopplad.";
+  } else {
+    S.spMsg = "Inloggningen gick inte igenom. Kolla Client ID och redirect-adressen.";
+  }
+}
+async function spToken() {
+  var t = localStorage.getItem("skael_token");
+  if (!t) return null;
+  if (Date.now() < Number(localStorage.getItem("skael_exp") || 0)) return t;
+  var rt = localStorage.getItem("skael_refresh");
+  if (!rt) return t;
+  var r = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: rt, client_id: SP.cid() })
+  });
+  var d = await r.json();
+  if (d.access_token) {
+    localStorage.setItem("skael_token", d.access_token);
+    if (d.refresh_token) localStorage.setItem("skael_refresh", d.refresh_token);
+    localStorage.setItem("skael_exp", String(Date.now() + (d.expires_in - 60) * 1000));
+    return d.access_token;
+  }
+  return null;
+}
+function spLogout() {
+  ["skael_token", "skael_refresh", "skael_exp", "skael_verifier"].forEach(function (k) { localStorage.removeItem(k); });
+  S.now = null; S.spMsg = "Spotify frånkopplad.";
+}
+async function spNowPlaying() {
+  S.spMsg = "";
+  var t = await spToken();
+  if (!t) { S.spMsg = "Inte kopplad till Spotify."; return; }
+  var r;
+  try {
+    r = await fetch("https://api.spotify.com/v1/me/player/currently-playing", { headers: { Authorization: "Bearer " + t } });
+  } catch (e) { S.spMsg = "Ingen kontakt med Spotify."; return; }
+  if (r.status === 204) { S.spMsg = "Inget spelas just nu."; return; }
+  if (r.status === 401) { spLogout(); S.spMsg = "Inloggningen gick ut. Koppla Spotify igen."; return; }
+  if (!r.ok) { S.spMsg = "Spotify svarade med fel " + r.status + "."; return; }
+  var d = await r.json(), it = d && d.item;
+  if (!it) { S.spMsg = "Inget spelas just nu."; return; }
+  var artists = (it.artists || []).map(function (a) { return a.name; }).join(", ");
+  var imgs = (it.album && it.album.images) || [];
+  S.now = { title: it.name, artist: artists, cover: imgs.length ? imgs[0].url : "",
+            url: (it.external_urls && it.external_urls.spotify) || "" };
+  S.song = artists ? it.name + " – " + artists : it.name;
+}
+
+/* =====================================================================
+   SPELLOGIK
+   ===================================================================== */
+function addPlayer() {
+  var name = (S.nameInput || "").trim();
+  if (!name || S.players.length >= 10) return;
+  var used = S.players.map(function (p) { return p.blob; });
+  var free = [0,1,2,3,4,5,6,7,8,9].filter(function (i) { return used.indexOf(i) === -1; });
+  S.players.push({
+    id: "p" + (S.seq++), name: name, blob: free[Math.floor(Math.random() * free.length)],
+    color: PALETTE[S.players.length % PALETTE.length],
+    correct: 0, given: 0, taken: 0, shots: 0
+  });
+  S.nameInput = "";
+}
+function lockGuess() {
+  S.guesses[S.players[S.turn].id] = S.pick;
+  S.pick = [];
+  if (S.turn + 1 < S.players.length) { S.turn++; S.screen = "handoff"; }
+  else S.screen = "truth";
+}
+function doReveal() {
+  var w = winners();
+  S.players = S.players.map(function (p) {
+    return w.indexOf(p.id) !== -1 ? Object.assign({}, p, { correct: p.correct + 1 }) : p;
+  });
+  S.log.unshift({ round: S.round, song: S.song.trim(), truth: S.truth.slice(), winners: w });
+  S.screen = "reveal";
+}
+function startDist() {
+  var w = winners();
+  var auto = w.every(function (id) { return targetsFor(id).length === 1; });
+  if (auto) {
+    var taken = {};
+    w.forEach(function (id) { var t = targetsFor(id)[0]; taken[t.id] = (taken[t.id] || 0) + S.sips; });
+    S.players = S.players.map(function (p) {
+      return Object.assign({}, p, {
+        taken: p.taken + (taken[p.id] || 0),
+        given: w.indexOf(p.id) !== -1 ? p.given + S.sips : p.given
+      });
+    });
+    S.roundTaken = taken;
+    S.roundNote = w.length === 1 ? nameOf(w[0]) + " hade som enda spelare rätt." : "Alla utom en hade rätt.";
+    S.screen = "outcome";
+    return;
+  }
+  S.distIdx = 0; S.pending = {}; S.roundTaken = {}; S.roundNote = ""; S.screen = "distribute";
+}
+function commitDist() {
+  var w = winners(), giver = w[S.distIdx];
+  Object.keys(S.pending).forEach(function (k) {
+    S.roundTaken[k] = (S.roundTaken[k] || 0) + S.pending[k];
+  });
+  S.players = S.players.map(function (p) {
+    var got = S.pending[p.id] || 0;
+    return Object.assign({}, p, {
+      taken: p.taken + got, given: p.id === giver ? p.given + S.sips : p.given
+    });
+  });
+  S.pending = {};
+  if (S.distIdx + 1 < w.length) S.distIdx++;
+  else S.screen = "outcome";
+}
+function randomizeDist() {
+  var t = targetsFor(winners()[S.distIdx]);
+  var split = randomSplit(S.sips, t.length);
+  S.pending = {};
+  t.forEach(function (p, i) { S.pending[p.id] = split[i]; });
+}
+function commitShots(take) {
+  if (take) S.players = S.players.map(function (p) { return Object.assign({}, p, { shots: p.shots + 1 }); });
+  S.roundTaken = {};
+  S.roundNote = take ? "Alla hade rätt. Laget tog en shot." : "Alla hade rätt. Laget skippade.";
+  S.screen = "outcome";
+}
+function doBomb() {
+  var taken = {};
+  S.players.forEach(function (p) { taken[p.id] = S.bombSips; });
+  S.players = S.players.map(function (p) { return Object.assign({}, p, { taken: p.taken + S.bombSips }); });
+  S.roundTaken = taken; S.roundNote = "Ingen hade rätt."; S.screen = "outcome";
+}
+function nextRound() {
+  S.round++; S.turn = 0; S.pick = []; S.guesses = {}; S.truth = []; S.song = "";
+  S.roundTaken = {}; S.roundNote = ""; S.luckyText = {}; S.spun = {}; S.now = null;
+  S.screen = "handoff";
+}
+function restart() {
+  S.players = S.players.map(function (p) {
+    return Object.assign({}, p, { correct: 0, given: 0, taken: 0, shots: 0 });
+  });
+  S.round = 1; S.turn = 0; S.pick = []; S.guesses = {}; S.truth = []; S.song = "";
+  S.log = []; S.roundTaken = {}; S.roundNote = ""; S.luckyText = {}; S.spun = {};
+  S.rules = []; S.showScores = false; S.screen = "setup";
+}
+
+/* ---------- hjulet ---------- */
+function openWheel(pid) {
+  S.wheelFor = pid; S.segs = buildWheel(); S.rot = 0;
+  S.result = null; S.devil = false; S.spinning = false; S.screen = "wheel";
+}
+function doSpin() {
+  if (S.spinning) return;
+  var list = S.devil ? DRUNK.map(function (d) { return d.id; }) : S.segs;
+  var per = 360 / list.length, idx;
+  if (S.devil) idx = Math.floor(Math.random() * list.length);
+  else {
+    var outcome = ODDS100[Math.floor(Math.random() * ODDS100.length)];
+    var slots = [];
+    list.forEach(function (v, i) { if (v === outcome) slots.push(i); });
+    idx = slots[Math.floor(Math.random() * slots.length)];
+  }
+  var cur = ((S.rot % 360) + 360) % 360;
+  var need = ((360 - (idx * per + per / 2)) % 360 + 360) % 360;
+  S.rot += ((need - cur) % 360 + 360) % 360 + 360 * 5;
+  S.spinning = true;
+  var el = document.querySelector(".wheel");
+  if (el) { el.classList.add("spinning"); el.style.transform = "rotate(" + S.rot + "deg)"; }
+  var pt = document.querySelector(".pointer");
+  if (pt) pt.classList.add("bump");
+  var btn = document.querySelector('[data-a="spin"]');
+  if (btn) { btn.disabled = true; btn.textContent = "Snurrar…"; }
+  setTimeout(function () { S.spinning = false; S.result = list[idx]; render(); }, 4500);
+}
+function applyResult(kind) {
+  var pid = S.wheelFor, k = S.roundTaken[pid] || 0, text = "";
+  function bump(fn) { S.players = S.players.map(fn); }
+
+  if (kind === "safe") {
+    bump(function (p) { return p.id === pid ? Object.assign({}, p, { taken: p.taken - k }) : p; });
+    text = "Slapp undan · 0 klunkar";
+  } else if (kind === "double") {
+    bump(function (p) { return p.id === pid ? Object.assign({}, p, { taken: p.taken + k }) : p; });
+    text = "Dubbelt upp · " + k * 2 + " klunkar";
+  } else if (kind === "shot") {
+    bump(function (p) { return p.id === pid ? Object.assign({}, p, { taken: p.taken - k, shots: p.shots + 1 }) : p; });
+    text = "2 cl shot istället · 0 klunkar";
+  } else if (kind === "d-double") {
+    bump(function (p) { return p.id === pid ? Object.assign({}, p, { taken: p.taken + k }) : p; });
+    text = "DRUNK MODE · " + k * 2 + " klunkar";
+  } else if (kind === "d-shot") {
+    bump(function (p) { return p.id === pid ? Object.assign({}, p, { taken: p.taken - k, shots: p.shots + 2 }) : p; });
+    text = "DRUNK MODE · 4 cl shot istället";
+  } else if (kind === "d-hand") {
+    bump(function (p) { return p.id === pid ? Object.assign({}, p, { taken: p.taken - k }) : p; });
+    S.rules.push({ pid: pid, label: "dricker med fel hand" });
+    text = "DRUNK MODE · egen regel: fel hand";
+  } else if (kind === "d-names") {
+    bump(function (p) { return p.id === pid ? Object.assign({}, p, { taken: p.taken - k }) : p; });
+    S.rules.push({ pid: pid, label: "får inte säga namn" });
+    text = "DRUNK MODE · egen regel: inga namn";
+  }
+  var keep = { safe: 0, double: k * 2, shot: 0, "d-double": k * 2, "d-shot": 0, "d-hand": 0, "d-names": 0 };
+  S.roundTaken[pid] = keep[kind];
+  S.luckyText[pid] = text;
+  S.spun[pid] = true;
+  S.screen = "outcome";
+}
+
+/* ---------- racet ---------- */
+function startRace() {
+  var others = S.players.filter(function (p) { return p.id !== S.wheelFor; }).map(function (p) { return p.id; });
+  var pool = shuffle(RACE_OUTS);
+  S.runners = others; S.dying = null; S.champ = null; S.screen = "race";
+  render();
+  step(others);
+
+  function step(list) {
+    if (list.length <= 1) {
+      setTimeout(function () { S.champ = list[0]; render(); }, 900);
+      return;
+    }
+    setTimeout(function () {
+      var victim = list[Math.floor(Math.random() * list.length)];
+      var why = pool.length ? pool.pop() : RACE_OUTS[Math.floor(Math.random() * RACE_OUTS.length)];
+      S.dying = { id: victim, fx: why.fx, text: why.text };
+      render();
+      setTimeout(function () {
+        var next = list.filter(function (x) { return x !== victim; });
+        S.dying = null; S.runners = next; render(); step(next);
+      }, 1900);
+    }, 1100);
+  }
+}
+function applyOther(luckyId) {
+  var pid = S.wheelFor, k = S.roundTaken[pid] || 0;
+  S.players = S.players.map(function (p) {
+    if (p.id === pid) return Object.assign({}, p, { taken: p.taken - k });
+    if (p.id === luckyId) return Object.assign({}, p, { taken: p.taken + k });
+    return p;
+  });
+  S.roundTaken[pid] = 0;
+  S.roundTaken[luckyId] = (S.roundTaken[luckyId] || 0) + k;
+  S.luckyText[pid] = nameOf(luckyId) + " vann racet och tar dem";
+  S.spun[pid] = true;
+  S.screen = "outcome";
+}
+
+/* =====================================================================
+   VYER
+   ===================================================================== */
+function pickList(sel, action) {
+  return '<div class="chips">' + S.players.map(function (p) {
+    var on = sel.indexOf(p.id) !== -1;
+    return '<button class="chip' + (on ? " on" : "") + '" data-a="' + action + '" data-id="' + p.id
+      + '" aria-pressed="' + on + '"' + (on ? ' style="background:' + p.color + '"' : "") + '>'
+      + blob(p.blob, on ? "#FFFFFF" : p.color, 26) + esc(p.name) + "</button>";
+  }).join("") + "</div>";
+}
+function miniChips(ids) {
+  if (!ids || !ids.length) return '<div class="chips" style="margin-top:8px"><span class="muted">inget svar</span></div>';
+  return '<div class="chips" style="margin-top:8px;gap:6px">' + ids.map(function (id) {
+    var p = of(id);
+    return '<span class="chip small on" style="background:' + p.color + ';color:#1E1608">'
+      + blob(p.blob, "#FFFFFF", 22) + esc(p.name) + "</span>";
+  }).join("") + "</div>";
+}
+function ruleBlock() {
+  if (!S.rules.length) return "";
+  return '<div style="margin-top:22px"><h3>Aktiva regler</h3><div class="rulebar">'
+    + S.rules.map(function (r) {
+        var p = of(r.pid);
+        return "<b><span style='color:" + (p ? p.color : "#fff") + "'>" + esc(nameOf(r.pid)) + "</span> " + esc(r.label) + "</b>";
+      }).join("")
+    + '</div><p class="muted" style="margin-top:8px">2 extra klunkar varje gång någon åker dit.</p></div>';
+}
+function toggleBtn(on, action, label) {
+  return '<button class="toggle' + (on ? " on" : "") + '" data-a="' + action + '" aria-pressed="' + on
+    + '" aria-label="' + label + '">' + (on ? "PÅ" : "AV") + "</button>";
+}
+function spotifyCard() {
+  var body;
+  if (!SP.cid()) {
+    body = '<p class="muted" style="margin-top:8px">Klistra in appens Client ID från Spotify Developer Dashboard, '
+      + 'så fylls låten som spelas i automatiskt vid facit.</p>'
+      + '<input type="text" id="cidInput" placeholder="Client ID" style="margin-top:12px">'
+      + '<button class="btn small ghost" data-a="save-cid">Spara</button>';
+  } else if (!SP.connected()) {
+    body = '<p class="muted" style="margin-top:8px">Logga in med kontot som spelar musiken.</p>'
+      + '<button class="btn small" data-a="sp-login">Koppla Spotify</button>'
+      + '<button class="btn small ghost" data-a="forget-cid">Byt Client ID</button>';
+  } else {
+    body = '<p style="margin-top:8px"><strong>Kopplad.</strong> <span class="muted">Titel och omslag fylls i vid facit.</span></p>'
+      + '<button class="btn small ghost" data-a="sp-logout">Koppla från</button>';
+  }
+  return '<div class="card"><h3>Spotify</h3>' + body
+    + (S.spMsg ? '<p class="muted" style="margin-top:10px">' + esc(S.spMsg) + "</p>" : "") + "</div>";
+}
+
+function vSetup() {
+  return wordmark()
+    + '<div class="tagline"><b>Gissa vems låt</b><b>Klunka!</b></div>'
+
+    + '<div class="card"><h2>Vilka spelar?</h2>'
+    + '<p class="muted" style="margin-top:8px">Alla ska vara med i samma Blend-lista. 2–10 spelare.</p>'
+    + '<div class="row" style="margin-top:16px">'
+    + '<input type="text" id="nameInput" placeholder="Namn" value="' + esc(S.nameInput) + '">'
+    + '<button class="add" data-a="add" aria-label="Lägg till spelare">+</button></div>'
+    + '<div class="plist">' + S.players.map(function (p) {
+        return '<div class="pitem">' + blob(p.blob, p.color, 38, { wobble: true })
+          + "<strong>" + esc(p.name) + "</strong>"
+          + '<button class="x" data-a="del" data-id="' + p.id + '" aria-label="Ta bort">×</button></div>';
+      }).join("") + "</div></div>"
+
+    + '<div class="card"><h3>Husregler</h3>'
+    + '<div class="row between" style="margin-top:16px"><label>Klunkar per rätt gissning</label>'
+    + '<input type="number" id="sipsInput" min="1" max="30" style="width:78px" value="' + S.sips + '"></div>'
+    + '<div class="row between" style="margin-top:16px"><label>Rätt gissning = immun</label>'
+    + toggleBtn(S.immune, "t-immune", "Immunitet") + "</div>"
+    + '<div class="row between" style="margin-top:16px"><label>Alla rätt = shot eller skip</label>'
+    + toggleBtn(S.shotSkipOn, "t-shotskip", "Shot eller skip") + "</div>"
+    + '<div class="row between" style="margin-top:16px"><label>Ingen rätt = alla dricker</label>'
+    + toggleBtn(S.bombOn, "t-bomb", "Alla dricker") + "</div>"
+    + (S.bombOn ? '<div class="row between" style="margin-top:12px"><label class="muted">Antal klunkar då</label>'
+        + '<input type="number" id="bombInput" min="1" max="10" style="width:78px" value="' + S.bombSips + '"></div>' : "")
+    + '<div class="row between" style="margin-top:16px"><label>Feeling lucky</label>'
+    + toggleBtn(S.luckyOn, "t-lucky", "Feeling lucky") + "</div></div>"
+
+    + spotifyCard()
+
+    + '<button class="btn" data-a="start"' + (S.players.length < 2 ? " disabled" : "") + ">"
+    + (S.players.length < 2 ? "Minst 2 spelare" : "Starta leken") + "</button>";
+}
+
+function vHandoff() {
+  var p = S.players[S.turn];
+  return '<div class="card center" style="padding:32px 18px">'
+    + '<div class="eyebrow">Låt ' + S.round + " · Spelare " + (S.turn + 1) + "/" + S.players.length + "</div>"
+    + '<div style="display:flex;justify-content:center;margin-top:18px">' + blob(p.blob, p.color, 110, { wobble: true }) + "</div>"
+    + '<div class="bigname" style="color:' + p.color + '">' + esc(p.name) + "</div>"
+    + '<p class="muted">Din tur. Alla andra tittar bort.</p>'
+    + '<button class="btn" data-a="ready">Jag har mobilen</button></div>';
+}
+
+function vGuess() {
+  var p = S.players[S.turn];
+  return '<div class="card"><div class="eyebrow">Låt ' + S.round + "</div>"
+    + '<h2 style="margin-top:10px">' + esc(p.name) + ", vem är med på den här låten?</h2>"
+    + '<p class="muted" style="margin-top:8px">Bara exakt rätt räknas.</p>'
+    + pickList(S.pick, "pick")
+    + '<button class="btn" data-a="lock"' + (S.pick.length === 0 ? " disabled" : "") + ">Lås gissningen</button></div>";
+}
+
+function vTruth() {
+  return '<div class="card"><div class="eyebrow">Facit</div>'
+    + '<h2 style="margin-top:10px">Vem var det egentligen?</h2>'
+    + (SP.connected() && S.now
+        ? '<div class="nowbox">' + (S.now.cover ? '<img src="' + esc(S.now.cover) + '" alt="">' : "")
+          + '<div><div class="t">' + (S.now.url ? '<a href="' + esc(S.now.url) + '" target="_blank" rel="noopener">' + esc(S.now.title) + "</a>" : esc(S.now.title))
+          + '</div><div class="muted">' + esc(S.now.artist) + "</div></div></div>"
+        : "")
+    + (SP.connected() ? '<button class="btn small ghost" data-a="sp-now">Hämta låten som spelas</button>' : "")
+    + (S.spMsg ? '<p class="muted" style="margin-top:8px">' + esc(S.spMsg) + "</p>" : "")
+    + '<input type="text" id="songInput" placeholder="Låt (valfritt)" style="margin-top:14px" value="' + esc(S.song) + '">'
+    + pickList(S.truth, "truth-pick")
+    + '<button class="btn red" data-a="reveal"' + (S.truth.length === 0 ? " disabled" : "") + ">Avslöja</button></div>";
+}
+
+function vReveal() {
+  var w = winners();
+  var head = '<div class="card"><div class="eyebrow">Rätt svar</div><h2 style="margin-top:10px">'
+    + esc(S.song.trim() || "Låt " + S.round) + "</h2>"
+    + (S.now && S.now.cover ? '<img class="cover-lg" src="' + esc(S.now.cover) + '" alt="">' : "")
+    + miniChips(S.truth) + "</div>";
+
+  var rows = '<div class="card">' + S.players.map(function (p) {
+    var ok = w.indexOf(p.id) !== -1;
+    return '<div class="reveal-row"><div class="row between">'
+      + '<span class="row" style="gap:9px">' + blob(p.blob, p.color, 30) + "<strong style='font-size:16px'>" + esc(p.name) + "</strong></span>"
+      + '<span class="stamp ' + (ok ? "ok" : "no") + '">' + (ok ? "Rätt" : "Fel") + "</span></div>"
+      + miniChips(S.guesses[p.id])
+      + (ok ? '<p class="muted" style="margin-top:8px">' + (S.immune ? "Immun · delar ut " : "Delar ut ") + S.sips + " klunkar</p>" : "")
+      + "</div>";
+  }).join("") + "</div>";
+
+  var foot = "";
+  if (w.length === 0) {
+    foot = '<div class="banner" style="background:rgba(224,71,61,.18);color:#F0837A">Ingen hade rätt'
+      + (S.bombOn ? " — alla tar " + S.bombSips + " klunkar" : "") + "</div>"
+      + '<button class="btn red" data-a="' + (S.bombOn ? "bomb" : "nodrink") + '">'
+      + (S.bombOn ? "Alla dricker" : "Vidare") + "</button>";
+  } else if (allCorrect()) {
+    foot = '<div class="banner" style="background:rgba(240,147,43,.16);color:var(--orange)">Alla hade rätt'
+      + (S.shotSkipOn ? ". Nu bestämmer laget." : " — ingen delar ut.") + "</div>"
+      + '<button class="btn" data-a="' + (S.shotSkipOn ? "to-shots" : "nodrink2") + '">'
+      + (S.shotSkipOn ? "Shot eller skip" : "Vidare") + "</button>";
+  } else {
+    foot = '<button class="btn" data-a="to-dist">Dela ut klunkar (' + w.length + " × " + S.sips + ")</button>";
+  }
+  return head + rows + foot;
+}
+
+function vShots() {
+  return '<div class="card center" style="padding:30px 18px">' + cupSVG("cup-lg")
+    + '<h2 style="margin-top:18px">Shot eller skip?</h2>'
+    + '<p class="muted" style="margin-top:10px">Rösta högt — majoriteten bestämmer för hela laget.</p>'
+    + '<button class="btn red" data-a="shot-yes">Shot</button>'
+    + '<button class="btn ghost" data-a="shot-no">Skip</button></div>';
+}
+
+function distLeft() {
+  var used = 0;
+  Object.keys(S.pending).forEach(function (k) { used += S.pending[k]; });
+  return S.sips - used;
+}
+function vDistribute() {
+  var w = winners(), left = distLeft();
+  return '<div class="card"><div class="eyebrow">Utdelare ' + (S.distIdx + 1) + "/" + w.length + "</div>"
+    + '<h2 style="margin-top:10px">' + esc(nameOf(w[S.distIdx])) + " delar ut</h2>"
+    + '<div class="counter" id="distLeft" style="margin-top:16px">' + left + "</div>"
+    + '<p class="muted center">klunkar kvar att dela ut</p>'
+    + '<div style="margin-top:14px">' + targetsFor(w[S.distIdx]).map(function (p) {
+        var n = S.pending[p.id] || 0, max = n + left;
+        var pct = max === 0 ? 0 : Math.round((n / max) * 100);
+        return '<div class="target"><div class="row">' + blob(p.blob, p.color, 34)
+          + "<strong>" + esc(p.name) + '</strong><span class="num" data-num="' + p.id + '">' + n + "</span></div>"
+          + '<input type="range" data-slide="' + p.id + '" min="0" max="' + max + '" value="' + n + '"'
+          + ' aria-label="Klunkar till ' + esc(p.name) + '" style="--c:' + p.color + ';--p:' + pct + '%"></div>';
+      }).join("") + "</div>"
+    + '<button class="btn ghost" data-a="rand">🎲 Slumpa utdelningen</button>'
+    + '<button class="btn" data-a="dist-done" id="distDone"' + (left !== 0 ? " disabled" : "") + ">"
+    + (left !== 0 ? left + " kvar att placera" : "Klart") + "</button></div>";
+}
+
+function vOutcome() {
+  var list = S.players.filter(function (p) { return (S.roundTaken[p.id] || 0) > 0 || S.luckyText[p.id]; });
+  return '<div class="card"><div class="eyebrow">Runda ' + S.round + "</div>"
+    + '<h2 style="margin-top:10px">Utfallet</h2>'
+    + (S.roundNote ? '<p class="muted" style="margin-top:8px">' + esc(S.roundNote) + "</p>" : "")
+    + '<div style="margin-top:16px">'
+    + (list.length === 0 ? '<p class="muted">Ingen drack den här rundan.</p>' : "")
+    + list.map(function (p) {
+        var n = S.roundTaken[p.id] || 0, done = S.spun[p.id];
+        var can = S.luckyOn && !done && n >= S.sips;
+        return '<div><div class="outrow">' + blob(p.blob, p.color, 40, { wobble: can })
+          + "<span><strong>" + esc(p.name) + "</strong>"
+          + (S.luckyText[p.id] ? '<div class="muted">' + esc(S.luckyText[p.id]) + "</div>" : "") + "</span>"
+          + '<span class="amount' + (done && n === 0 ? " gone" : "") + '">' + n + " klunkar</span></div>"
+          + (can ? '<button class="btn small red" data-a="lucky" data-id="' + p.id + '">🎰 Feeling lucky</button>' : "")
+          + "</div>";
+      }).join("") + "</div>"
+    + ruleBlock() + "</div>"
+    + '<button class="btn" data-a="next">Nästa låt</button>'
+    + '<button class="btn ghost" data-a="scores">Se ställningen</button>';
+}
+
+function vWheel() {
+  var list = S.devil ? DRUNK.map(function (d) { return d.id; }) : S.segs;
+  var per = 360 / Math.max(1, list.length);
+  var stops = list.map(function (s, i) {
+    var c = S.devil ? DRUNK.filter(function (d) { return d.id === s; })[0].color : CATS[s].color;
+    return c + " " + (i * per).toFixed(2) + "deg " + ((i + 1) * per).toFixed(2) + "deg";
+  }).join(", ");
+  var label = S.result ? (S.devil ? DRUNK.filter(function (d) { return d.id === S.result; })[0].label : CATS[S.result].label) : "";
+
+  var legend = S.devil
+    ? '<div class="legend">' + DRUNK.map(function (d) {
+        return "<span><i style='background:" + d.color + "'></i>" + esc(d.label) + "</span>";
+      }).join("") + "</div>"
+    : '<div class="legend">'
+      + "<span><i style='background:" + CATS.safe.color + "'></i>20% klarar sig</span>"
+      + "<span><i style='background:" + CATS.double.color + "'></i>20% dubbelt</span>"
+      + "<span><i style='background:" + CATS.other.color + "'></i>15% race</span>"
+      + "<span><i style='background:" + CATS.shot.color + "'></i>15% shot</span>"
+      + "<span><i style='background:#4A3040'></i>30% drunk mode</span></div>";
+
+  var foot = "";
+  if (!S.result) {
+    foot = '<button class="btn red" data-a="spin">Snurra</button>';
+  } else {
+    foot = '<div class="banner" style="font-size:17px;background:' + (S.devil ? "rgba(224,71,61,.2)" : "rgba(240,147,43,.16)")
+      + ";color:" + (S.devil ? "#F0837A" : "var(--orange)") + '">' + esc(label) + "</div>"
+      + (S.result === "drunk" ? '<button class="btn red" data-a="to-devil">Öppna drunk mode</button>'
+        : S.result === "other" ? '<button class="btn red" data-a="to-race">Starta racet</button>'
+        : '<button class="btn" data-a="apply">Ta konsekvensen</button>');
+  }
+
+  return '<div class="card center wheelcard' + (S.devil ? " devilcard" : "") + '" style="padding:24px 18px 26px">'
+    + partyLayer(S.devil)
+    + '<div class="eyebrow">' + (S.devil ? "Drunk mode" : "Feeling lucky") + "</div>"
+    + (S.devil ? '<div class="flames">🔥🔥🔥</div>' : "")
+    + '<h2 style="margin-top:8px">' + esc(nameOf(S.wheelFor)) + " · " + (S.roundTaken[S.wheelFor] || 0) + " klunkar</h2>"
+    + '<div class="wheelwrap"><div class="rays' + (S.devil ? " devil" : "") + '"></div>'
+    + '<div class="pointer"' + (S.devil ? ' style="border-top-color:#E0473D"' : "") + "></div>"
+    + '<div class="wheel' + (S.devil ? " devil" : "") + '" style="background:conic-gradient(' + stops + ');transform:rotate(' + S.rot + 'deg)"></div>'
+    + '<div class="gloss"></div>'
+    + '<div class="hub' + (S.devil ? " devil" : "") + '">' + (S.devil ? "DRUNK" : cupSVG("cupmini")) + "</div>"
+    + (S.result ? burstHTML() : "") + "</div>"
+    + legend + foot + "</div>";
+}
+
+var PARTY_SPOTS = [
+  { pos: "left:1%;top:17%", size: 54 }, { pos: "right:1%;top:12%", size: 58 },
+  { pos: "left:0%;bottom:26%", size: 50 }, { pos: "right:0%;bottom:22%", size: 54 },
+  { pos: "left:17%;bottom:3%", size: 46 }, { pos: "right:17%;bottom:2%", size: 48 }
+];
+var DRUNK_MOODS = ["puke", "phone", "fall", "slur", "cup", "fall"];
+function partyLayer(drunk) {
+  if (!S.players.length) return "";
+  return '<div class="party" aria-hidden="true">' + PARTY_SPOTS.map(function (s, i) {
+    var p = S.players[i % S.players.length];
+    return '<span class="who ' + (drunk ? "sway" : "hop") + (i % 3) + '" style="' + s.pos
+      + ";animation-delay:" + (i * 0.42).toFixed(2) + 's">'
+      + blob(p.blob, p.color, s.size, { drunk: drunk, hold: drunk ? DRUNK_MOODS[i % DRUNK_MOODS.length] : "cup" })
+      + "</span>";
+  }).join("") + "</div>";
+}
+function burstHTML() {
+  var out = "";
+  for (var i = 0; i < 12; i++) {
+    var a = (i / 12) * Math.PI * 2;
+    out += "<i style='background:" + PALETTE[i % PALETTE.length] + ";--x:" + Math.round(Math.cos(a) * 120)
+      + "px;--y:" + Math.round(Math.sin(a) * 120) + "px;animation-delay:" + ((i % 4) * 0.05) + "s'></i>";
+  }
+  return '<div class="burst">' + out + "</div>";
+}
+
+function vRace() {
+  var head = '<div class="card center racecard"><div class="eyebrow">Racet om '
+    + (S.roundTaken[S.wheelFor] || 0) + " klunkar</div>"
+    + '<h2 style="margin-top:8px">'
+    + (S.champ ? esc(nameOf(S.champ)) + " vann!" : S.dying ? "En blobb ur leken…" : "Vem orkar hela vägen?")
+    + "</h2>";
+
+  if (!S.champ) {
+    return head + '<div class="track">' + S.runners.map(function (id, i) {
+        var p = of(id), out = S.dying && S.dying.id === id;
+        return '<div class="runner ' + (out ? "out" : "r" + (i % 3)) + '" style="animation-delay:'
+          + (i * 0.13).toFixed(2) + 's">'
+          + '<span class="rname" style="color:' + p.color + '">' + esc(p.name) + "</span>"
+          + blob(p.blob, p.color, 54, { drunk: out, hold: out ? null : "cup" })
+          + (out ? '<span class="fx">' + S.dying.fx + "</span>" : "") + "</div>";
+      }).join("") + "</div>"
+      + '<div class="banner" style="background:rgba(0,0,0,.25);color:var(--cream);min-height:50px">'
+      + (S.dying ? "<strong>" + esc(nameOf(S.dying.id)) + "</strong> " + esc(S.dying.text)
+                 : '<span class="muted">Kvar i racet: ' + S.runners.length + "</span>")
+      + "</div></div>";
+  }
+
+  var c = of(S.champ);
+  return head + '<div class="champ"><div class="champblob">' + blob(c.blob, c.color, 130) + "</div>" + beerSVG() + "</div>"
+    + '<div class="bigname" style="color:' + c.color + '">' + esc(c.name) + "</div>"
+    + '<p class="muted">Ensam kvar vid ölen. Skål — och ' + (S.roundTaken[S.wheelFor] || 0) + " klunkar.</p>"
+    + '<div class="burst" style="position:relative;inset:auto;height:0">' + burstHTML().replace(/^<div class="burst">|<\/div>$/g, "") + "</div>"
+    + '<button class="btn" data-a="race-done">' + esc(c.name) + " dricker</button></div>";
+}
+
+function vScores() {
+  var rows = S.players.slice().sort(function (a, b) {
+    return (b.correct - a.correct) || (b.given - a.given);
+  }).map(function (p) {
+    return "<tr><td><span class='row' style='gap:8px'>" + blob(p.blob, p.color, 28) + esc(p.name)
+      + "</span></td><td>" + p.correct + "</td><td>" + p.given + "</td><td>" + p.taken + "</td><td>" + p.shots + "</td></tr>";
+  }).join("");
+  var hist = S.log.slice(0, 6).map(function (r) {
+    return '<p class="muted" style="margin-top:10px">' + r.round + ". " + esc(r.song || "Namnlös låt") + " → "
+      + "<strong style='color:var(--cream)'>" + esc(r.truth.map(nameOf).join(" + ")) + "</strong>"
+      + (r.winners.length ? " · rätt: " + esc(r.winners.map(nameOf).join(", ")) : " · ingen rätt") + "</p>";
+  }).join("");
+  return '<div class="card"><h2>Ställningen</h2><table><thead><tr>'
+    + "<th>Spelare</th><th>Rätt</th><th>Ut</th><th>In</th><th>Shot</th></tr></thead><tbody>"
+    + rows + "</tbody></table>" + ruleBlock()
+    + (hist ? '<h3 style="margin-top:22px">Tidigare låtar</h3>' + hist : "")
+    + '<button class="btn" data-a="scores-close">Tillbaka</button>'
+    + '<button class="btn ghost" data-a="restart">Nollställ allt</button></div>';
+}
+
+function render() {
+  var top = (S.screen !== "setup" && !S.showScores)
+    ? '<div class="topbar"><span class="eyebrow">Låt ' + S.round + "</span>"
+      + '<button class="btn-ghost" data-a="scores">Ställning</button></div>' : "";
+  var body;
+  if (S.showScores) body = vScores();
+  else if (S.screen === "setup") body = vSetup();
+  else if (S.screen === "handoff") body = vHandoff();
+  else if (S.screen === "guess") body = vGuess();
+  else if (S.screen === "truth") body = vTruth();
+  else if (S.screen === "reveal") body = vReveal();
+  else if (S.screen === "shots") body = vShots();
+  else if (S.screen === "distribute") body = vDistribute();
+  else if (S.screen === "wheel") body = vWheel();
+  else if (S.screen === "race") body = vRace();
+  else body = vOutcome();
+  document.getElementById("app").innerHTML = top + body;
+  save();
+}
+
+/* =====================================================================
+   HÄNDELSER
+   ===================================================================== */
+function syncInputs() {
+  var n = document.getElementById("nameInput"); if (n) S.nameInput = n.value;
+  var s = document.getElementById("sipsInput"); if (s) S.sips = Math.max(1, parseInt(s.value, 10) || 1);
+  var b = document.getElementById("bombInput"); if (b) S.bombSips = Math.max(1, parseInt(b.value, 10) || 1);
+  var g = document.getElementById("songInput"); if (g) S.song = g.value;
+}
+
+/* uppdaterar utdelningen utan att rita om – annars tappas greppet om reglaget */
+function syncDist() {
+  var left = distLeft();
+  var lEl = document.getElementById("distLeft");
+  if (lEl) lEl.textContent = left;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-slide]"), function (el) {
+    var id = el.getAttribute("data-slide"), n = S.pending[id] || 0;
+    var max = n + left;
+    el.max = max;
+    if (Number(el.value) !== n) el.value = n;
+    el.style.setProperty("--p", (max === 0 ? 0 : Math.round((n / max) * 100)) + "%");
+    var num = document.querySelector('[data-num="' + id + '"]');
+    if (num) num.textContent = n;
+  });
+  var done = document.getElementById("distDone");
+  if (done) {
+    done.disabled = left !== 0;
+    done.textContent = left !== 0 ? left + " kvar att placera" : "Klart";
+  }
+}
+
+document.addEventListener("input", function (e) {
+  var el = e.target;
+  if (el && el.hasAttribute && el.hasAttribute("data-slide")) {
+    S.pending[el.getAttribute("data-slide")] = Number(el.value);
+    syncDist();
+    save();
+  }
+});
+
+document.addEventListener("click", async function (e) {
+  var el = e.target.closest("[data-a]");
+  if (!el || el.disabled) return;
+  var a = el.getAttribute("data-a"), id = el.getAttribute("data-id");
+  syncInputs();
+
+  if (a === "add") addPlayer();
+  else if (a === "del") S.players = S.players.filter(function (p) { return p.id !== id; });
+  else if (a === "t-immune") S.immune = !S.immune;
+  else if (a === "t-shotskip") S.shotSkipOn = !S.shotSkipOn;
+  else if (a === "t-bomb") S.bombOn = !S.bombOn;
+  else if (a === "t-lucky") S.luckyOn = !S.luckyOn;
+  else if (a === "save-cid") {
+    var v = document.getElementById("cidInput");
+    if (v && v.value.trim()) { localStorage.setItem("skael_cid", v.value.trim()); S.spMsg = "Client ID sparat."; }
+  }
+  else if (a === "forget-cid") { localStorage.removeItem("skael_cid"); S.spMsg = ""; }
+  else if (a === "sp-login") await spLogin();
+  else if (a === "sp-logout") spLogout();
+  else if (a === "sp-now") await spNowPlaying();
+  else if (a === "start") { S.turn = 0; S.screen = "handoff"; }
+  else if (a === "ready") S.screen = "guess";
+  else if (a === "pick") S.pick = toggleIn(S.pick, id);
+  else if (a === "lock") {
+    lockGuess();
+    if (S.screen === "truth" && SP.connected()) { render(); await spNowPlaying(); }
+  }
+  else if (a === "truth-pick") S.truth = toggleIn(S.truth, id);
+  else if (a === "reveal") doReveal();
+  else if (a === "bomb") doBomb();
+  else if (a === "nodrink") { S.roundTaken = {}; S.roundNote = "Ingen hade rätt."; S.screen = "outcome"; }
+  else if (a === "nodrink2") { S.roundTaken = {}; S.roundNote = "Alla hade rätt."; S.screen = "outcome"; }
+  else if (a === "to-shots") S.screen = "shots";
+  else if (a === "shot-yes") commitShots(true);
+  else if (a === "shot-no") commitShots(false);
+  else if (a === "to-dist") startDist();
+  else if (a === "rand") { randomizeDist(); render(); return; }
+  else if (a === "dist-done") commitDist();
+  else if (a === "lucky") openWheel(id);
+  else if (a === "spin") { doSpin(); return; }
+  else if (a === "to-devil") { S.devil = true; S.result = null; S.rot = 0; }
+  else if (a === "to-race") { startRace(); return; }
+  else if (a === "race-done") applyOther(S.champ);
+  else if (a === "apply") applyResult(S.result);
+  else if (a === "next") nextRound();
+  else if (a === "scores") S.showScores = true;
+  else if (a === "scores-close") S.showScores = false;
+  else if (a === "restart") restart();
+  render();
+});
+
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && e.target && e.target.id === "nameInput") {
+    syncInputs(); addPlayer(); render();
+  }
+});
+
+/* ---------- konfetti i bakgrunden ---------- */
+(function () {
+  var out = "";
+  for (var i = 0; i < 16; i++) {
+    out += "<i style='left:" + ((i * 37 + 11) % 96) + "%;top:" + ((i * 53 + 7) % 92) + "%;background:"
+      + PALETTE[i % PALETTE.length] + ";--r:" + (((i * 47) % 90) - 45) + "deg;animation-delay:"
+      + ((i % 5) * 0.7) + "s'></i>";
+  }
+  document.getElementById("conf").innerHTML = out;
+})();
+
+/* ---------- start ---------- */
+(async function init() {
+  load();
+  var q = new URLSearchParams(location.search);
+  if (q.get("code")) {
+    await spExchange(q.get("code"));
+    history.replaceState(null, "", SP.redirect);
+  } else if (q.get("error")) {
+    S.spMsg = "Inloggningen avbröts.";
+    history.replaceState(null, "", SP.redirect);
+  }
+  render();
+})();
+</script>
+</body>
+</html>
